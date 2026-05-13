@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Cinema</title>
+
+    <style>
+        .linha {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .assento {
+            width: 40px;
+            height: 40px;
+            margin: 5px;
+        }
+
+        .letra {
+            width: 20px;
+            font-weight: bold;
+        }
+
+        .linha .letra:first-child {
+            margin-right: 10px;
+            /* espaço depois do A da esquerda */
+        }
+
+        .linha .letra:last-child {
+            margin-left: 10px;
+            /* espaço antes do A da direita */
+        }
+
+        .tela {
+            width: 300px;
+            height: 40px;
+            color: white;
+            background-color: #77a1d8;
+            margin: 20px auto;
+            text-align: center;
+            line-height: 40px;
+            font-weight: bold;
+            border-radius: 5px;
+            letter-spacing: 2px;
+            border-radius: 20px 20px 50px 50px;
+        }
+
+        .titulo {
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-align: center
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="titulo">
+        Selecione seus assentos
+    </div>
+    <div class="tela">TELA</div>
+    <div class="linha">
+        <span class="letra">A</span>
+        <button class="assento">1</button>
+        <button class="assento">2</button>
+        <button class="assento">3</button>
+        <button class="assento">4</button>
+        <button class="assento">5</button>
+        <span class="letra">A</span>
+    </div>
+
+    <div class="linha">
+        <span class="letra">B</span>
+        <button class="assento">1</button>
+        <button class="assento">2</button>
+        <button class="assento">3</button>
+        <button class="assento">4</button>
+        <button class="assento">5</button>
+        <span class="letra">B</span>
+    </div>
+
+    <div class="linha">
+        <span class="letra">C</span>
+        <button class="assento">1</button>
+        <button class="assento">2</button>
+        <button class="assento">3</button>
+        <button class="assento">4</button>
+        <button class="assento">5</button>
+        <span class="letra">C</span>
+    </div>
+
+    <div id="selecionados" class="titulo">
+        Selecionados: nenhum
+    </div>
+
+    <script>
+        const assentos = document.querySelectorAll('.assento');
+        const resultado = document.getElementById('selecionados');
+
+        assentos.forEach(assento => {
+            assento.addEventListener('click', () => {
+
+                // alterna cor
+                if (assento.style.backgroundColor === 'green') {
+                    assento.style.backgroundColor = '';
+                } else {
+                    assento.style.backgroundColor = 'green';
+                }
+
+                // pega todos os selecionados
+                const selecionados = document.querySelectorAll('.assento');
+
+                let lista = [];
+
+                selecionados.forEach(a => {
+                    if (a.style.backgroundColor === 'green') {
+
+                        const linha = a.parentElement.querySelector('.letra').innerText;
+                        const numero = a.innerText;
+
+                        lista.push(linha + numero);
+                    }
+                });
+
+                // mostra na tela
+                if (lista.length === 0) {
+                    resultado.innerHTML = "Selecionados: nenhum";
+                } else {
+                    resultado.innerHTML = "Selecionados: " + lista.join(', ');
+                }
+
+            });
+        });
+    </script>
+
+</body>
+
+</html>
