@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>🎬 Cinema</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to right, #e3f2fd, #f4f4f4);
+}
+
+.container {
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 20px;
+    border-radius: 15px;
+    background-color: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.titulo {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.controle-ingressos {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.tela {
+    width: 300px;
+    height: 40px;
+    margin: 20px auto;
+    background: linear-gradient(to right, #5f9cff, #77a1d8);
+    color: white;
+    text-align: center;
+    line-height: 40px;
+    border-radius: 30px;
+}
+
+.linha {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.letra {
+    width: 20px;
+    font-weight: bold;
+}
+
+.assento {
+    width: 35px;
+    height: 35px;
+    margin: 4px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+.assento:hover {
+    background-color: #d0e7ff;
+}
+
+.selecionado {
+    background-color: green;
+    color: white;
+}
+
+.bloqueado {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.corredor {
+    width: 40px;
+}
+
+.total {
+    text-align: center;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.btn-confirmar {
+    border: none;
+    border-radius: 6px;
+    background-color: #5f9cff;
+    color: white;
+    padding: 6px 12px;
+    cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="titulo"> Escolha seus ingressos 🎬</div>
+
+<div class="controle-ingressos">
+    Inteiras: <input type="number" id="inteiras" min="0" value="0">
+    Meias: <input type="number" id="meias" min="0" value="0">
+    <button id="confirmar" class="btn-confirmar">Confirmar</button>
+</div>
+
+<div class="tela">TELA</div>
+
+<!-- AQUI VÃO SER CRIADAS AS LINHAS -->
+<div id="cinema"></div>
+
+<div id="selecionados" class="titulo">💺 Selecionados: nenhum</div>
+<div id="total" class="total">Valor total: R$ 0,00</div>
+
+</div>
+
+<script>
+const containerCinema = document.getElementById('cinema');
+
+// CRIAR LINHAS A até G
+const letras = ['A','B','C','D','E','F','G'];
+
+letras.forEach(letra => {
+
+    const linha = document.createElement('div');
+    linha.classList.add('linha');
+
+    // letra esquerda
+    const letraEsq = document.createElement('span');
+    letraEsq.classList.add('letra');
+    letraEsq.innerText = letra;
+    linha.appendChild(letraEsq);
+
+    // assentos 1 a 5
+    for (let i = 1; i <= 5; i++) {
+        const assento = document.createElement('button');
+        assento.classList.add('assento');
+        assento.innerText = i;
+        linha.appendChild(assento);
+    }
+
+    // corredor
+    const corredor = document.createElement('span');
+    corredor.classList.add('corredor');
+    linha.appendChild(corredor);
+
+    // assentos 6 a 10
+    for (let i = 6; i <= 10; i++) {
+        const assento = document.createElement('button');
+        assento.classList.add('assento');
+        assento.innerText = i;
+        linha.appendChild(assento);
+    }
+
+    // letra direita
+    const letraDir = document.createElement('span');
+    letraDir.classList.add('letra');
+    letraDir.innerText = letra;
+    linha.appendChild(letraDir);
+
+    containerCinema.appendChild(linha);
+});
+
+
+// ====== SEU JS (quase igual) ======
+const assentos = document.querySelectorAll('.assento');
+const resultado = document.getElementById('selecionados');
+const totalElemento = document.getElementById('total');
+
+let limiteInteiras = 0;
+let limiteMeias = 0;
+let inteirasRestantes = 0;
+let meiasRestantes = 0;
+let liberado = false;
+
+assentos.forEach(a => a.classList.add('bloqueado'));
+
+document.getElementById('confirmar').addEventListener('click', () => {
+    limiteInteiras = Number(document.getElementById('inteiras').value);
+    limiteMeias = Number(document.getElementById('meias').value);
+
+    inteirasRestantes = limiteInteiras;
+    meiasRestantes = limiteMeias;
+
+    const total = limiteInteiras + limiteMeias;
+
+    if (total === 0) {
+        alert("Escolha pelo menos 1 ingresso");
+        return;
+    }
+
+    liberado = true;
+
+    assentos.forEach(a => {
+        a.classList.remove('bloqueado');
+        a.classList.remove('selecionado');
+        a.dataset.valor = 0;
+    });
+
+    resultado.innerHTML = "💺 Selecionados: nenhum";
+    totalElemento.innerHTML = "Valor total: R$ 0,00";
+});
+
+assentos.forEach(assento => {
+    assento.addEventListener('click', () => {
+
+        if (!liberado) return;
+
+        const selecionados = document.querySelectorAll('.assento.selecionado');
+        const limiteTotal = limiteInteiras + limiteMeias;
+
+        if (!assento.classList.contains('selecionado') && selecionados.length >= limiteTotal) {
+            return;
+        }
+
+        if (!assento.classList.contains('selecionado')) {
+
+            if (inteirasRestantes > 0) {
+                assento.dataset.valor = 20;
+                inteirasRestantes--;
+            } else if (meiasRestantes > 0) {
+                assento.dataset.valor = 10;
+                meiasRestantes--;
+            }
+
+        } else {
+            const valor = Number(assento.dataset.valor);
+
+            if (valor === 20) inteirasRestantes++;
+            else if (valor === 10) meiasRestantes++;
+        }
+
+        assento.classList.toggle('selecionado');
+
+        const novosSelecionados = document.querySelectorAll('.assento.selecionado');
+
+        let lista = [];
+        let total = 0;
+
+        novosSelecionados.forEach(a => {
+            const linha = a.parentElement.querySelector('.letra').innerText;
+            const numero = a.innerText;
+
+            lista.push(linha + numero);
+            total += Number(a.dataset.valor);
+        });
+
+        resultado.innerHTML = lista.length
+            ? "💺 Selecionados: " + lista.join(', ')
+            : "💺 Selecionados: nenhum";
+
+        totalElemento.innerHTML = total.toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        });
+    });
+});
+</script>
+
+</body>
+</html>
